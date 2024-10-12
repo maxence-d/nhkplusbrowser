@@ -1,0 +1,22 @@
+{
+  "name": "nhkplusbrowser",
+  "version": "1.0.0",
+  "description": "A simple browser for NHK Plus programs",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maxence-d/nhkplusbrowser.git"
+  },
+  "author": "Maxence Delattre",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/maxence-d/nhkplusbrowser/issues"
+  },
+  "homepage": "https://github.com/maxence-d/nhkplusbrowser#readme",
+  "devDependencies": {
+    "electron": "^32.2.0"
+  }
+}
