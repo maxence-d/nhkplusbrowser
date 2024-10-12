@@ -1,39 +1,33 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow } = require('electron');
 const path = require('path');
-const onScrape = require('./scrape');
+const handleScrapePage = require('./scrapeHandler');  // Import the scrape handler
+const renderHtml = require('./renderHtml');  // Import the render function
 
 let mainWindow;
 
-const createWindow = () => {
+app.on('ready', async () => {
+  // Create a hidden Electron window for scraping
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    show: false, // Window is hidden during scraping
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
       contextIsolation: true,
       enableRemoteModule: false
     }
-  })
+  });
 
-  mainWindow.loadFile('index.html')
-}
+  // Start the scraping process in the background
+  const scrapedData = await handleScrapePage(mainWindow); // Scrape the data
 
-// Handle the 'scrape-page' event from the renderer process
-ipcMain.handle('scrape-page', () => onScrape(mainWindow));  // Use the handler
+  // Generate the HTML content with the scraped data
+  const htmlContent = renderHtml(scrapedData);
 
-app.whenReady().then(() => {
-  createWindow()
+  // Load the generated HTML directly into the main window
+  mainWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(htmlContent)}`);
 
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow()
-    }
-  })
-})
-
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
-})
+  // Show the window after loading the new HTML content
+  mainWindow.show();
+});

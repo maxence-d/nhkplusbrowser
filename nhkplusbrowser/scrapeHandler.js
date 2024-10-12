@@ -8,7 +8,7 @@ const handleScrapePage = async (mainWindow) => {
   await mainWindow.webContents.executeJavaScript(`
     new Promise((resolve) => {
       let totalHeight = 0;
-      const distance = 400;
+      const distance = 100;
       const timer = setInterval(() => {
         window.scrollBy(0, distance);
         totalHeight += distance;
@@ -34,18 +34,14 @@ const handleScrapePage = async (mainWindow) => {
 
       return {
         href: anchor ? anchor.href : null,
-        thumbnailUrl: thumbnail ? thumbnail.src : null,
+        thumbnailUrl: thumbnail ? thumbnail.src : null, // Get the src from the <img>
         duration: durationElem ? durationElem.textContent.trim().replace('分', ' minutes') : null,
         broadcastDate: programDateElem ? programDateElem.textContent.trim() : null,
       };
     });
   `);
 
-  // Save the extracted data to a JSON file
-  fs.writeFileSync('extracted_data.json', JSON.stringify(extractedData, null, 2), 'utf8');
-  console.log('Data extracted and saved as extracted_data.json.');
-
-  // Optional: You can return this data for further processing if needed
+  // Return the extracted data
   return extractedData;
 };
 
