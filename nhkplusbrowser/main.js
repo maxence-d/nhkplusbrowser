@@ -22,7 +22,7 @@ app.on('ready', async () => {
   // Start the scraping process in the background
   const scrapedData = await handleScrapePage(mainWindow); // Scrape the data
 
-  // Generate the HTML content with the scraped data
+  // Generate the HTML content with the scraped data grouped by playlist header
   const htmlContent = renderHtml(scrapedData);
 
   // Load the generated HTML directly into the main window

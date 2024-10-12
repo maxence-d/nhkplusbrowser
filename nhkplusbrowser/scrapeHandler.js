@@ -24,24 +24,39 @@ const handleScrapePage = async (mainWindow) => {
   // Wait for additional content to load
   await new Promise(resolve => setTimeout(resolve, 2000));
 
-  // Extract data from each swiper-slide element
+  // Extract and group data by playlist-header
   const extractedData = await mainWindow.webContents.executeJavaScript(`
-    Array.from(document.querySelectorAll('.swiper-slide')).map(slide => {
-      const anchor = slide.querySelector('a');
-      const thumbnail = anchor ? anchor.querySelector('figure img') : null; // Correctly navigate to <img> in <figure>
-      const durationElem = slide.querySelector('p'); // Assuming duration is in <p>
-      const programDateElem = slide.querySelector('.program_modat');
+    (function() {
+      const data = [];
+      let currentGroup = null;
 
-      return {
-        href: anchor ? anchor.href : null,
-        thumbnailUrl: thumbnail ? thumbnail.src : null, // Get the src from the <img>
-        duration: durationElem ? durationElem.textContent.trim().replace('分', ' minutes') : null,
-        broadcastDate: programDateElem ? programDateElem.textContent.trim() : null,
-      };
-    });
+      document.querySelectorAll('.playlist-header, .swiper-slide').forEach(element => {
+        if (element.classList.contains('playlist-header')) {
+          // If it's a playlist-header, start a new group
+          const headerText = element.querySelector('h3') ? element.querySelector('h3').textContent.trim() : 'Unknown Group';
+          currentGroup = { header: headerText, slides: [] };
+          data.push(currentGroup);
+        } else if (element.classList.contains('swiper-slide') && currentGroup) {
+          // If it's a swiper-slide, add it to the current group
+          const anchor = element.querySelector('a');
+          const thumbnail = anchor ? anchor.querySelector('figure img') : null; // Correctly navigate to <img> in <figure>
+          const durationElem = element.querySelector('p'); // Assuming duration is in <p>
+          const programDateElem = element.querySelector('.program_modat');
+
+          currentGroup.slides.push({
+            href: anchor ? anchor.href : null,
+            thumbnailUrl: thumbnail ? thumbnail.src : null, // Get the src from the <img>
+            duration: durationElem ? durationElem.textContent.trim().replace('分', ' minutes') : null,
+            broadcastDate: programDateElem ? programDateElem.textContent.trim() : null,
+          });
+        }
+      });
+
+      return data;
+    })();
   `);
 
-  // Return the extracted data
+  // Return the grouped data
   return extractedData;
 };
 

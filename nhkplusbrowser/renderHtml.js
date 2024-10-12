@@ -1,12 +1,19 @@
 const renderHtml = (scrapedData) => {
-  // Create the grid of clickable images using the scraped data
-  const imageGrid = scrapedData.map(item => `
-    <div class="grid-item">
-      <a href="${item.href}" target="_blank">
-        <img src="${item.thumbnailUrl}" alt="Thumbnail" />
-        <p>Duration: ${item.duration}</p>
-        <p>Date: ${item.broadcastDate}</p>
-      </a>
+  // Create the HTML structure for each group
+  const groupedHtml = scrapedData.map(group => `
+    <div class="group">
+      <h2>${group.header}</h2>
+      <div class="grid-container">
+        ${group.slides.map(item => `
+          <div class="grid-item">
+            <a href="${item.href}" target="_blank">
+              <img src="${item.thumbnailUrl}" alt="Thumbnail" />
+              <p>Duration: ${item.duration}</p>
+              <p>Date: ${item.broadcastDate}</p>
+            </a>
+          </div>
+        `).join('')}
+      </div>
     </div>
   `).join('');
 
@@ -23,6 +30,13 @@ const renderHtml = (scrapedData) => {
           font-family: Arial, sans-serif;
           background-color: #f9f9f9;
           padding: 20px;
+        }
+        .group {
+          margin-bottom: 40px;
+        }
+        .group h2 {
+          font-size: 24px;
+          margin-bottom: 10px;
         }
         .grid-container {
           display: grid;
@@ -48,10 +62,8 @@ const renderHtml = (scrapedData) => {
       </style>
     </head>
     <body>
-      <h1>Scraped Data</h1>
-      <div class="grid-container">
-        ${imageGrid}
-      </div>
+      <h1>Scraped Data Grouped by Playlist Header</h1>
+      ${groupedHtml}
     </body>
     </html>
   `;
