@@ -8,7 +8,6 @@ const createWindow = () => {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    show: false,  // This will make the window invisible
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
