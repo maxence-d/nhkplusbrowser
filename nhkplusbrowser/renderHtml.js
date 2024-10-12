@@ -8,6 +8,7 @@ const renderHtml = (scrapedData) => {
           <div class="grid-item">
             <a href="${item.href}" target="_blank">
               <img src="${item.thumbnailUrl}" alt="Thumbnail" />
+              <h3>${item.title}</h3> <!-- Display the h3 title -->
               <p>Duration: ${item.duration}</p>
               <p>Date: ${item.broadcastDate}</p>
             </a>
@@ -55,6 +56,10 @@ const renderHtml = (scrapedData) => {
           max-width: 100%;
           height: auto;
           border-radius: 10px;
+        }
+        .grid-item h3 {
+          font-size: 18px;
+          margin: 10px 0;
         }
         .grid-item p {
           margin: 5px 0;
