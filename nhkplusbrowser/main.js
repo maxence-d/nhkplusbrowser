@@ -1,13 +1,27 @@
-const { app, BrowserWindow } = require('electron/main')
+const { app, BrowserWindow, ipcMain } = require('electron');
+const path = require('path');
+const onScrape = require('./scrape');
+
+let mainWindow;
 
 const createWindow = () => {
-  const win = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 800,
-    height: 600
+    height: 600,
+    show: false,  // This will make the window invisible
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: false,
+      contextIsolation: true,
+      enableRemoteModule: false
+    }
   })
 
-  win.loadFile('index.html')
+  mainWindow.loadFile('index.html')
 }
+
+// Handle the 'scrape-page' event from the renderer process
+ipcMain.handle('scrape-page', () => onScrape(mainWindow));  // Use the handler
 
 app.whenReady().then(() => {
   createWindow()
