@@ -106,7 +106,6 @@ app.on('ready', async () => {
 
   // Handle IPC for checkbox state updates
   ipcMain.on('update-checkbox-state', (event, categoryName, state) => {
-    console.log("ipc");
     checkboxStates.set(categoryName, state); // Update the checkbox state in the map
   });
 
