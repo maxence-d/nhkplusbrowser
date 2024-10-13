@@ -2,6 +2,7 @@ const { app, BrowserWindow } = require('electron');
 const path = require('path');
 const handleScrapePage = require('./scrapeHandler');  // Import the scrape handler
 const renderHtml = require('./renderHtml');  // Import the render function
+const fs = require('fs');
 
 let mainWindow;
 
@@ -22,12 +23,16 @@ app.on('ready', async () => {
   // Start the scraping process in the background
   const scrapedData = await handleScrapePage(mainWindow); // Scrape the data
 
-  // Generate the HTML content with the scraped data grouped by playlist header
+  // Generate the HTML content with the scraped data
   const htmlContent = renderHtml(scrapedData);
 
-  // Load the generated HTML directly into the main window
-  mainWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(htmlContent)}`);
+  // Write the HTML content to a temporary file
+  const tempHtmlPath = path.join(__dirname, 'temp.html');
+  fs.writeFileSync(tempHtmlPath, htmlContent);
 
+  // Load the HTML file with the correct path
+  mainWindow.loadFile(tempHtmlPath);
+  
   // Show the window after loading the new HTML content
   mainWindow.show();
 });

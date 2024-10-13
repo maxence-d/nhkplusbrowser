@@ -1,0 +1,77 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+}
+
+.sidebar {
+  width: 250px;
+  padding: 20px;
+  background-color: #333;
+  color: white;
+  height: 100vh; /* Full viewport height */
+  overflow-y: auto; /* Make the sidebar scrollable */
+}
+
+.content {
+  flex-grow: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.group {
+  margin-bottom: 40px;
+}
+
+.group h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.grid-item {
+  text-align: center;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.grid-item img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+.grid-item h3 {
+  font-size: 18px;
+  margin: 10px 0;
+}
+
+.grid-item p {
+  margin: 5px 0;
+}
+
+.sidebar h3 {
+  margin-top: 0;
+}
+
+.checkbox-container {
+  margin-bottom: 15px;
+}
+
+.checkbox-container label {
+  color: white;
+}
