@@ -5,7 +5,7 @@ const handleScrapePage = require('./scrapeHandler');  // Import the scrape handl
 const renderHtml = require('./renderHtml');  // Import the render function
 
 let mainWindow;
-const dataFilePath = path.join(__dirname, 'data.json');
+const dataFilePath = path.join(__dirname, 'data.json'); // Path to the data file
 
 // Function to get the current date in Japan time
 const getJapanDate = () => {
@@ -17,7 +17,7 @@ const getJapanDate = () => {
 // Function to check if scraping is needed
 const isScrapingNeeded = () => {
   if (!fs.existsSync(dataFilePath)) {
-    return true; // If the log doesn't exist, we need to scrape
+    return true; // If the data file doesn't exist, we need to scrape
   }
 
   const logData = JSON.parse(fs.readFileSync(dataFilePath, 'utf8'));
@@ -50,38 +50,38 @@ app.on('ready', async () => {
     }
   });
 
+  let scrapedData;
+
   // Check if scraping is needed based on the Japan time zone
   if (isScrapingNeeded()) {
     console.log("Starting the scraping process...");
     
     // Start the scraping process in the background
-    const scrapedData = await handleScrapePage(mainWindow);
+    scrapedData = await handleScrapePage(mainWindow);
 
     // Log the current Japan date after scraping
     logScrapeDate();
 
-    // Generate the HTML content with the scraped data
-    const htmlContent = renderHtml(scrapedData);
-
-    // Write the HTML content to a temporary file
-    const tempHtmlPath = path.join(__dirname, 'temp.html');
-    fs.writeFileSync(tempHtmlPath, htmlContent);
-
-    // Load the HTML file
-    mainWindow.loadFile(tempHtmlPath);
-    
-    // Show the window after loading the new HTML content
-    mainWindow.show();
+    // Save the scraped data to data.json
+    fs.writeFileSync(dataFilePath, JSON.stringify({ lastScrapeDate: getJapanDate(), data: scrapedData }), 'utf8');
   } else {
     console.log("Scraping is not needed. Loading the previously scraped data...");
 
-    // Load the previously generated HTML
-    const tempHtmlPath = path.join(__dirname, 'temp.html');
-    if (fs.existsSync(tempHtmlPath)) {
-      mainWindow.loadFile(tempHtmlPath);
-      mainWindow.show();
-    } else {
-      console.log("No previous data available.");
-    }
+    // Load the previously saved data
+    const logData = JSON.parse(fs.readFileSync(dataFilePath, 'utf8'));
+    scrapedData = logData.data; // Access the previously scraped data
   }
+
+  // Generate the HTML content with the scraped or previously loaded data
+  const htmlContent = renderHtml(scrapedData);
+
+  // Write the HTML content to a temporary file
+  const tempHtmlPath = path.join(__dirname, 'temp.html');
+  fs.writeFileSync(tempHtmlPath, htmlContent);
+
+  // Load the HTML file
+  mainWindow.loadFile(tempHtmlPath);
+  
+  // Show the window after loading the new HTML content
+  mainWindow.show();
 });

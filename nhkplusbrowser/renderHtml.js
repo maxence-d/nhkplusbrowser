@@ -33,20 +33,28 @@ const renderHtml = (scrapedData) => {
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Scraped Data with Filters</title>
-      <link rel="stylesheet" href="styles.css"> <!-- Link to external CSS -->
+      <link rel="stylesheet" href="styles/styles.css"> <!-- Link to external CSS -->
     </head>
     <body>
-      <!-- Sidebar with filters -->
-      <div class="sidebar">
-        <h3>Exclude Categories</h3>
-        <div class="checkbox-container">
-          ${checkboxes}
-        </div>
+      <!-- Top panel with sidebar toggle button -->
+      <div class="top-panel">
+        <button id="toggle-sidebar" class="toggle-btn">Close Sidebar</button>
       </div>
 
-      <!-- Main content area -->
-      <div class="content">
-        ${groupedHtml}
+      <!-- Main layout for sidebar and content -->
+      <div class="main-layout">
+        <!-- Sidebar with filters -->
+        <div class="sidebar" id="sidebar">
+          <h3>Exclude Categories</h3>
+          <div class="checkbox-container">
+            ${checkboxes}
+          </div>
+        </div>
+
+        <!-- Main content area -->
+        <div class="content">
+          ${groupedHtml}
+        </div>
       </div>
 
       <script>
@@ -62,6 +70,22 @@ const renderHtml = (scrapedData) => {
               groupElement.style.display = 'none'; // Hide the group
             }
           });
+        });
+
+        // Handle collapsible sidebar toggle
+        const sidebar = document.getElementById('sidebar');
+        const toggleBtn = document.getElementById('toggle-sidebar');
+        let sidebarVisible = true;
+
+        toggleBtn.addEventListener('click', () => {
+          sidebarVisible = !sidebarVisible;
+          if (sidebarVisible) {
+            sidebar.style.display = 'block';
+            toggleBtn.textContent = 'Close Sidebar';
+          } else {
+            sidebar.style.display = 'none';
+            toggleBtn.textContent = 'Open Sidebar';
+          }
         });
       </script>
     </body>

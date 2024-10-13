@@ -2,12 +2,42 @@ html, body {
   height: 100%;
   margin: 0;
   padding: 0;
-  display: flex;
 }
 
 body {
   font-family: Arial, sans-serif;
   background-color: #f9f9f9;
+  display: flex;
+  flex-direction: column; /* Stack elements vertically */
+}
+
+.top-panel {
+  width: 100%;
+  background-color: #333;
+  color: white;
+  padding: 10px;
+  display: flex;
+  justify-content: flex-start; /* Align button to the left */
+  align-items: center;
+}
+
+.toggle-btn {
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.toggle-btn:hover {
+  background-color: #0056b3;
+}
+
+.main-layout {
+  display: flex; /* Create a flex container for sidebar and content */
+  flex-grow: 1; /* Allow it to grow and take available space */
 }
 
 .sidebar {
@@ -15,7 +45,7 @@ body {
   padding: 20px;
   background-color: #333;
   color: white;
-  height: 100vh; /* Full viewport height */
+  height: 100%; /* Make sidebar height 100% */
   overflow-y: auto; /* Make the sidebar scrollable */
 }
 
@@ -62,14 +92,6 @@ body {
 
 .grid-item p {
   margin: 5px 0;
-}
-
-.sidebar h3 {
-  margin-top: 0;
-}
-
-.checkbox-container {
-  margin-bottom: 15px;
 }
 
 .checkbox-container label {
