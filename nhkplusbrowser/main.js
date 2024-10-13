@@ -5,7 +5,7 @@ const handleScrapePage = require('./scrapeHandler');  // Import the scrape handl
 const renderHtml = require('./renderHtml');  // Import the render function
 
 let mainWindow;
-const scrapeLogPath = path.join(__dirname, 'scrapeLog.json');
+const dataFilePath = path.join(__dirname, 'data.json');
 
 // Function to get the current date in Japan time
 const getJapanDate = () => {
@@ -16,11 +16,11 @@ const getJapanDate = () => {
 
 // Function to check if scraping is needed
 const isScrapingNeeded = () => {
-  if (!fs.existsSync(scrapeLogPath)) {
+  if (!fs.existsSync(dataFilePath)) {
     return true; // If the log doesn't exist, we need to scrape
   }
 
-  const logData = JSON.parse(fs.readFileSync(scrapeLogPath, 'utf8'));
+  const logData = JSON.parse(fs.readFileSync(dataFilePath, 'utf8'));
   const lastScrapeDate = logData.lastScrapeDate;
   
   const currentJapanDate = getJapanDate();
@@ -33,7 +33,7 @@ const logScrapeDate = () => {
   const logData = {
     lastScrapeDate: currentJapanDate
   };
-  fs.writeFileSync(scrapeLogPath, JSON.stringify(logData), 'utf8');
+  fs.writeFileSync(dataFilePath, JSON.stringify(logData), 'utf8');
 };
 
 app.on('ready', async () => {
