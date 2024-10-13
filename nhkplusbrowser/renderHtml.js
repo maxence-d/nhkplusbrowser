@@ -1,7 +1,7 @@
 const renderHtml = (scrapedData, checkboxStates) => {
   // Create the HTML structure for each group and generate checkboxes for the panel
   const groupedHtml = scrapedData.map((group, index) => `
-    <div class="group" data-group-index="${index}">
+    <div class="group" data-group-name="${group.header}">
       <h2>${group.header}</h2>
       <div class="grid-container">
         ${group.slides.map(item => `
@@ -62,11 +62,22 @@ const renderHtml = (scrapedData, checkboxStates) => {
         // Handle filtering based on checkboxes
         document.querySelectorAll('.checkbox-container input[type="checkbox"]').forEach(checkbox => {
           checkbox.addEventListener('change', function() {
+           
+
+
             const category = this.getAttribute('data-category');
             const state = this.checked;
 
             // Send IPC message to update checkbox state in the main process
-            window.ipcRenderer.send('update-checkbox-state', category, state);
+            window.ipcRenderer.send('update-checkbox-state', category, state); 
+
+            const groupElement = document.querySelector('.group[data-group-name="' + category + '"]');
+            
+            if (this.checked) {
+              groupElement.style.display = 'block'; // Show the group
+            } else {
+              groupElement.style.display = 'none'; // Hide the group
+            }
           });
         });
 
