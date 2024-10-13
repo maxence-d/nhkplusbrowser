@@ -1,5 +1,11 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
-contextBridge.exposeInMainWorld('electronAPI', {
-  scrapePage: () => ipcRenderer.invoke('scrape-page')
+contextBridge.exposeInMainWorld('ipcRenderer', {
+  send: (channel, data) => {
+    // whitelist channels
+    const validChannels = ['update-checkbox-state'];
+    if (validChannels.includes(channel)) {
+      ipcRenderer.send(channel, data);
+    }
+  }
 });

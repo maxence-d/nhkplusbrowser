@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const handleScrapePage = require('./scrapeHandler');  // Import the scrape handler
@@ -6,6 +6,9 @@ const renderHtml = require('./renderHtml');  // Import the render function
 
 let mainWindow;
 const dataFilePath = path.join(__dirname, 'data.json'); // Path to the data file
+
+// Map for checkbox states (key: category name, value: checkbox state)
+const checkboxStates = new Map();
 
 // Function to get the current date in Japan time
 const getJapanDate = () => {
@@ -62,7 +65,12 @@ app.on('ready', async () => {
     // Log the current Japan date after scraping
     logScrapeDate();
 
-    // Save the scraped data to data.json
+    // Initialize checkbox states with all checked by default
+    scrapedData.forEach(group => {
+      checkboxStates.set(group.header, true); // Default all to checked
+    });
+
+    // Save initial scraped data
     fs.writeFileSync(dataFilePath, JSON.stringify({ lastScrapeDate: getJapanDate(), data: scrapedData }), 'utf8');
   } else {
     console.log("Scraping is not needed. Loading the previously scraped data...");
@@ -70,10 +78,21 @@ app.on('ready', async () => {
     // Load the previously saved data
     const logData = JSON.parse(fs.readFileSync(dataFilePath, 'utf8'));
     scrapedData = logData.data; // Access the previously scraped data
+
+    // Load checkbox states from the saved map
+    // Convert saved checkbox states object back into a Map
+    const savedCheckboxStates = logData.checkboxStates || {};
+    checkboxStates.clear(); // Clear existing states
+    for (const [key, value] of Object.entries(savedCheckboxStates)) {
+      checkboxStates.set(key, value); // Populate checkboxStates Map
+    }
   }
 
-  // Generate the HTML content with the scraped or previously loaded data
-  const htmlContent = renderHtml(scrapedData);
+  // Convert checkboxStates Map to an object for rendering
+  const checkboxStatesObject = Object.fromEntries(checkboxStates);
+
+  // Generate the HTML content with the scraped or previously loaded data and checkbox states
+  const htmlContent = renderHtml(scrapedData, checkboxStatesObject);
 
   // Write the HTML content to a temporary file
   const tempHtmlPath = path.join(__dirname, 'temp.html');
@@ -84,4 +103,20 @@ app.on('ready', async () => {
   
   // Show the window after loading the new HTML content
   mainWindow.show();
+
+  // Handle IPC for checkbox state updates
+  ipcMain.on('update-checkbox-state', (event, categoryName, state) => {
+    console.log("ipc");
+    checkboxStates.set(categoryName, state); // Update the checkbox state in the map
+  });
+
+  // Save checkbox states on application close
+  app.on('before-quit', () => {
+    const finalData = {
+      lastScrapeDate: getJapanDate(),
+      data: scrapedData,
+      checkboxStates: Object.fromEntries(checkboxStates) // Convert Map to an object
+    };
+    fs.writeFileSync(dataFilePath, JSON.stringify(finalData), 'utf8');
+  });
 });

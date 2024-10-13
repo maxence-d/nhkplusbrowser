@@ -1,4 +1,4 @@
-const renderHtml = (scrapedData) => {
+const renderHtml = (scrapedData, checkboxStates) => {
   // Create the HTML structure for each group and generate checkboxes for the panel
   const groupedHtml = scrapedData.map((group, index) => `
     <div class="group" data-group-index="${index}">
@@ -20,7 +20,7 @@ const renderHtml = (scrapedData) => {
 
   const checkboxes = scrapedData.map((group, index) => `
     <div>
-      <input type="checkbox" id="filter-${index}" checked data-group-index="${index}" />
+      <input type="checkbox" id="filter-${index}" ${checkboxStates[group.header] ? 'checked' : ''} data-category="${group.header}" />
       <label for="filter-${index}">${group.header}</label>
     </div>
   `).join('');
@@ -46,7 +46,8 @@ const renderHtml = (scrapedData) => {
         <!-- Sidebar with filters -->
         <div class="sidebar" id="sidebar">
           <h3>Exclude Categories</h3>
-          <div class="checkbox-container">
+          <button id="toggle-filters" class="toggle-filters-btn">Show Filters</button>
+          <div class="checkbox-container" style="display: none;"> <!-- Start hidden -->
             ${checkboxes}
           </div>
         </div>
@@ -61,14 +62,11 @@ const renderHtml = (scrapedData) => {
         // Handle filtering based on checkboxes
         document.querySelectorAll('.checkbox-container input[type="checkbox"]').forEach(checkbox => {
           checkbox.addEventListener('change', function() {
-            const groupIndex = this.getAttribute('data-group-index');
-            const groupElement = document.querySelector('.group[data-group-index="' + groupIndex + '"]');
-            
-            if (this.checked) {
-              groupElement.style.display = 'block'; // Show the group
-            } else {
-              groupElement.style.display = 'none'; // Hide the group
-            }
+            const category = this.getAttribute('data-category');
+            const state = this.checked;
+
+            // Send IPC message to update checkbox state in the main process
+            window.ipcRenderer.send('update-checkbox-state', category, state);
           });
         });
 
@@ -85,6 +83,22 @@ const renderHtml = (scrapedData) => {
           } else {
             sidebar.style.display = 'none';
             toggleBtn.textContent = 'Open Sidebar';
+          }
+        });
+
+        // Handle collapsible filter toggle
+        const toggleFiltersBtn = document.getElementById('toggle-filters');
+        const checkboxContainer = document.querySelector('.checkbox-container');
+        let filtersVisible = false; // Start with filters hidden
+
+        toggleFiltersBtn.addEventListener('click', () => {
+          filtersVisible = !filtersVisible;
+          if (filtersVisible) {
+            checkboxContainer.style.display = 'block';
+            toggleFiltersBtn.textContent = 'Hide Filters';
+          } else {
+            checkboxContainer.style.display = 'none';
+            toggleFiltersBtn.textContent = 'Show Filters';
           }
         });
       </script>
