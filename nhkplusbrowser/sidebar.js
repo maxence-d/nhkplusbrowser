@@ -21,28 +21,38 @@ function setupSidebarButton() {
 }
 
 function setupFiltering() {
-    // Handle filtering based on checkboxes and initialize category visibility
-    document.querySelectorAll('#filters .draggable-category input[type="checkbox"]').forEach(checkbox => {
+
+    let categoryToCbs = {}
+
+    document.querySelectorAll('.category-cb').forEach(checkbox => {
         const category = checkbox.getAttribute('data-category');
-        const groupElement = document.querySelector('.playlist-content[data-group-name="' + category + '"]');
-
-        // Initialize visibility based on checkbox state
-        if (!checkbox.checked) {
-            groupElement.style.display = 'none'; // Hide the group if checkbox is unchecked
-        }
-
-        // Add event listener for checkbox changes
-        checkbox.addEventListener('change', function () {
-            if (this.checked) {
-                groupElement.style.display = 'block'; // Show the group when checked
-            } else {
-                groupElement.style.display = 'none'; // Hide the group when unchecked
-            }
-
-            // Send IPC message to update checkbox state in the main process
-            window.ipcRenderer.send('update-checkbox-state', category, this.checked);
-        });
+        if (categoryToCbs[category] === undefined)
+            categoryToCbs[category] = []
+        categoryToCbs[category].push(checkbox);
     });
+
+
+    for (let category in categoryToCbs) {
+        categoryToCbs[category].forEach(checkbox => {
+            const groupElement = document.querySelector('.playlist-content[data-group-name="' + category + '"]');
+            if (!checkbox.checked) {
+                groupElement.style.display = 'none'; // Hide the group if checkbox is unchecked
+            }
+            checkbox.addEventListener('change', function () {
+                if (this.checked) {
+                    groupElement.style.display = 'block'; // Show the group when checked
+                } else {
+                    groupElement.style.display = 'none'; // Hide the group when unchecked
+                }
+                // sync checkboxes
+                categoryToCbs[category].forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                });
+                window.ipcRenderer.send('update-checkbox-state', category, this.checked);
+            });
+        });
+    }
+
 }
 
 function setupOrdering() {
