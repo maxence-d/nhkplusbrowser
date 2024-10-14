@@ -1,5 +1,24 @@
 setupFiltering();
 setupOrdering();
+setupSidebarButton();
+
+function setupSidebarButton() {
+    // Handle collapsible sidebar toggle
+    const sidebar = document.getElementById('sidebar');
+    const toggleBtn = document.getElementById('toggle-sidebar');
+    let sidebarVisible = true;
+
+    toggleBtn.addEventListener('click', () => {
+        sidebarVisible = !sidebarVisible;
+        if (sidebarVisible) {
+            sidebar.style.display = 'block';
+            toggleBtn.textContent = 'Close Sidebar';
+        } else {
+            sidebar.style.display = 'none';
+            toggleBtn.textContent = 'Open Sidebar';
+        }
+    });
+}
 
 function setupFiltering() {
     // Handle filtering based on checkboxes and initialize category visibility
