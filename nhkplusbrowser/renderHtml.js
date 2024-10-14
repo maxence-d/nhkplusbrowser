@@ -45,13 +45,7 @@ const renderHtml = (scrapedData, checkboxStates) => {
       <div class="main-layout">
         <!-- Sidebar with filters -->
         <div class="sidebar" id="sidebar">
-          <h3>Exclude Categories</h3>
-          <button id="toggle-filters" class="toggle-filters-btn">Show Filters</button>
-          <div class="checkbox-container" style="display: none;"> <!-- Start hidden -->
-            ${checkboxes}
-          </div>
-          <h3>Reorder Categories</h3>
-          <div class="draggable-container" id="draggable-container">
+          <div class="draggable-container" id="filters">
             ${checkboxes}
           </div>
         </div>
