@@ -25,7 +25,7 @@ const isScrapingNeeded = () => {
 
   const logData = JSON.parse(fs.readFileSync(dataFilePath, 'utf8'));
   const lastScrapeDate = logData.lastScrapeDate;
-  
+
   const currentJapanDate = getJapanDate();
   return currentJapanDate !== lastScrapeDate; // Scrape if the date is different from the last scrape date
 };
@@ -36,7 +36,7 @@ const logScrapeDate = () => {
   const logData = {
     lastScrapeDate: currentJapanDate
   };
-  fs.writeFileSync(dataFilePath, JSON.stringify(logData), 'utf8');
+  fs.writeFileSync(dataFilePath, JSON.stringify(logData, null, 2), 'utf8');
 };
 
 app.on('ready', async () => {
@@ -58,7 +58,7 @@ app.on('ready', async () => {
   // Check if scraping is needed based on the Japan time zone
   if (isScrapingNeeded()) {
     console.log("Starting the scraping process...");
-    
+
     // Start the scraping process in the background
     scrapedData = await handleScrapePage(mainWindow);
 
@@ -100,7 +100,7 @@ app.on('ready', async () => {
 
   // Load the HTML file
   mainWindow.loadFile(tempHtmlPath);
-  
+
   // Show the window after loading the new HTML content
   mainWindow.show();
 
@@ -116,6 +116,6 @@ app.on('ready', async () => {
       data: scrapedData,
       checkboxStates: Object.fromEntries(checkboxStates) // Convert Map to an object
     };
-    fs.writeFileSync(dataFilePath, JSON.stringify(finalData), 'utf8');
+    fs.writeFileSync(dataFilePath, JSON.stringify(finalData, null, 2), 'utf8');
   });
 });
