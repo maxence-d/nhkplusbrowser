@@ -55,11 +55,11 @@ body {
   overflow-y: auto;
 }
 
-.group {
+.playlist-content {
   margin-bottom: 40px;
 }
 
-.group h2 {
+.playlist-header h2 {
   font-size: 24px;
   margin-bottom: 10px;
 }

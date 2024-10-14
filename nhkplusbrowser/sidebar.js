@@ -24,7 +24,7 @@ function setupFiltering() {
     // Handle filtering based on checkboxes and initialize category visibility
     document.querySelectorAll('#filters .draggable-category input[type="checkbox"]').forEach(checkbox => {
         const category = checkbox.getAttribute('data-category');
-        const groupElement = document.querySelector('.group[data-group-name="' + category + '"]');
+        const groupElement = document.querySelector('.playlist-content[data-group-name="' + category + '"]');
 
         // Initialize visibility based on checkbox state
         if (!checkbox.checked) {

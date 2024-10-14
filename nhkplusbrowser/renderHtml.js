@@ -1,10 +1,13 @@
 const renderHtml = (scrapedData, checkboxStates) => {
+  
   // Create the HTML structure for each group and generate checkboxes for the panel
-  const groupedHtml = scrapedData.map((group, index) => `
-    <div class="group" data-group-name="${group.header}" data-group-index="${index}">
-      <h2>${group.header}</h2>
+  const groupedHtml = scrapedData.map((playlist, index) => `
+    <div class = "playlist-header">
+      <h2>${playlist.header}</h2>
+    </div>
+    <div class="playlist-content" data-group-name="${playlist.header}" data-group-index="${index}">
       <div class="grid-container">
-        ${group.slides.map(item => `
+        ${playlist.slides.map(item => `
           <div class="grid-item">
             <a href="${item.href}" target="_blank">
               <img src="${item.thumbnailUrl}" alt="Thumbnail" />
@@ -18,10 +21,10 @@ const renderHtml = (scrapedData, checkboxStates) => {
     </div>
   `).join('');
 
-  const checkboxes = scrapedData.map((group) => `
-    <div class="draggable-category" draggable="true" data-group-name="${group.header}">
-      <input type="checkbox" id="filter-${group.header}" ${checkboxStates[group.header] ? 'checked' : ''} data-category="${group.header}" />
-      <label for="filter-${group.header}">${group.header}</label>
+  const checkboxes = scrapedData.map((playlist) => `
+    <div class="draggable-category" draggable="true" data-group-name="${playlist.header}">
+      <input type="checkbox" id="filter-${playlist.header}" ${checkboxStates[playlist.header] ? 'checked' : ''} data-category="${playlist.header}" />
+      <label for="filter-${playlist.header}">${playlist.header}</label>
     </div>
   `).join('');
 
