@@ -1,7 +1,7 @@
 const renderHtml = (scrapedData, checkboxStates) => {
   // Create the HTML structure for each group and generate checkboxes for the panel
   const groupedHtml = scrapedData.map((group, index) => `
-    <div class="group" data-group-name="${group.header}">
+    <div class="group" data-group-name="${group.header}" data-group-index="${index}">
       <h2>${group.header}</h2>
       <div class="grid-container">
         ${group.slides.map(item => `
@@ -18,10 +18,10 @@ const renderHtml = (scrapedData, checkboxStates) => {
     </div>
   `).join('');
 
-  const checkboxes = scrapedData.map((group, index) => `
-    <div>
-      <input type="checkbox" id="filter-${index}" ${checkboxStates[group.header] ? 'checked' : ''} data-category="${group.header}" />
-      <label for="filter-${index}">${group.header}</label>
+  const checkboxes = scrapedData.map((group) => `
+    <div class="draggable-category" draggable="true" data-group-name="${group.header}">
+      <input type="checkbox" id="filter-${group.header}" ${checkboxStates[group.header] ? 'checked' : ''} data-category="${group.header}" />
+      <label for="filter-${group.header}">${group.header}</label>
     </div>
   `).join('');
 
@@ -50,70 +50,20 @@ const renderHtml = (scrapedData, checkboxStates) => {
           <div class="checkbox-container" style="display: none;"> <!-- Start hidden -->
             ${checkboxes}
           </div>
+          <h3>Reorder Categories</h3>
+          <div class="draggable-container" id="draggable-container">
+            ${checkboxes}
+          </div>
         </div>
 
         <!-- Main content area -->
-        <div class="content">
+        <div class="content" id="main-content">
           ${groupedHtml}
         </div>
-      </div>
 
-      <script>
-        // Handle filtering based on checkboxes and initialize category visibility
-        document.querySelectorAll('.checkbox-container input[type="checkbox"]').forEach(checkbox => {
-          const category = checkbox.getAttribute('data-category');
-          const groupElement = document.querySelector('.group[data-group-name="' + category + '"]');
-          
-          // Initialize visibility based on checkbox state
-          if (!checkbox.checked) {
-            groupElement.style.display = 'none'; // Hide the group if checkbox is unchecked
-          }
-          
-          // Add event listener for checkbox changes
-          checkbox.addEventListener('change', function() {
-            if (this.checked) {
-              groupElement.style.display = 'block'; // Show the group when checked
-            } else {
-              groupElement.style.display = 'none'; // Hide the group when unchecked
-            }
-            
-            // Send IPC message to update checkbox state in the main process
-            window.ipcRenderer.send('update-checkbox-state', category, this.checked);
-          });
-        });
-        // Handle collapsible sidebar toggle
-        const sidebar = document.getElementById('sidebar');
-        const toggleBtn = document.getElementById('toggle-sidebar');
-        let sidebarVisible = true;
-
-        toggleBtn.addEventListener('click', () => {
-          sidebarVisible = !sidebarVisible;
-          if (sidebarVisible) {
-            sidebar.style.display = 'block';
-            toggleBtn.textContent = 'Close Sidebar';
-          } else {
-            sidebar.style.display = 'none';
-            toggleBtn.textContent = 'Open Sidebar';
-          }
-        });
-
-        // Handle collapsible filter toggle
-        const toggleFiltersBtn = document.getElementById('toggle-filters');
-        const checkboxContainer = document.querySelector('.checkbox-container');
-        let filtersVisible = false; // Start with filters hidden
-
-        toggleFiltersBtn.addEventListener('click', () => {
-          filtersVisible = !filtersVisible;
-          if (filtersVisible) {
-            checkboxContainer.style.display = 'block';
-            toggleFiltersBtn.textContent = 'Hide Filters';
-          } else {
-            checkboxContainer.style.display = 'none';
-            toggleFiltersBtn.textContent = 'Show Filters';
-          }
-        });
-      </script>
-    </body>
+        <!-- External JS file -->
+        <script src="sidebar.js"></script>
+      </body>
     </html>
   `;
 
