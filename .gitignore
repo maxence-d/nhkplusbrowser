@@ -130,3 +130,4 @@ dist
 .pnp.*
 nhkplusbrowser/temp.html
 nhkplusbrowser/data.json
+nhkplusbrowser/run_code.bat
