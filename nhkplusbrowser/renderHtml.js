@@ -59,28 +59,28 @@ const renderHtml = (scrapedData, checkboxStates) => {
       </div>
 
       <script>
-        // Handle filtering based on checkboxes
+        // Handle filtering based on checkboxes and initialize category visibility
         document.querySelectorAll('.checkbox-container input[type="checkbox"]').forEach(checkbox => {
+          const category = checkbox.getAttribute('data-category');
+          const groupElement = document.querySelector('.group[data-group-name="' + category + '"]');
+          
+          // Initialize visibility based on checkbox state
+          if (!checkbox.checked) {
+            groupElement.style.display = 'none'; // Hide the group if checkbox is unchecked
+          }
+          
+          // Add event listener for checkbox changes
           checkbox.addEventListener('change', function() {
-           
-
-
-            const category = this.getAttribute('data-category');
-            const state = this.checked;
-
-            // Send IPC message to update checkbox state in the main process
-            window.ipcRenderer.send('update-checkbox-state', category, state); 
-
-            const groupElement = document.querySelector('.group[data-group-name="' + category + '"]');
-            
             if (this.checked) {
-              groupElement.style.display = 'block'; // Show the group
+              groupElement.style.display = 'block'; // Show the group when checked
             } else {
-              groupElement.style.display = 'none'; // Hide the group
+              groupElement.style.display = 'none'; // Hide the group when unchecked
             }
+            
+            // Send IPC message to update checkbox state in the main process
+            window.ipcRenderer.send('update-checkbox-state', category, this.checked);
           });
         });
-
         // Handle collapsible sidebar toggle
         const sidebar = document.getElementById('sidebar');
         const toggleBtn = document.getElementById('toggle-sidebar');
