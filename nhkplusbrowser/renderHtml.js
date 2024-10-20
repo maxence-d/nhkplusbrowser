@@ -1,31 +1,29 @@
 const renderHtml = (scrapedData, checkboxStates) => {
 
   // Create the HTML structure for each group and generate checkboxes for the panel
-  const groupedHtml = scrapedData.map((playlist, index) => `
-    <div class="playlist-header">
-      <input type="checkbox" class="category-cb" ${checkboxStates[playlist.header] ? 'checked' : ''} data-category="${playlist.header}" />
-      <h2>${playlist.header}</h2>
+  const playlists = scrapedData.map((playlist, index) => `
+    <div class="playlist-title">
+      <input type="checkbox" class="playlist-cb" ${checkboxStates[playlist.title] ? 'checked' : ''} />
+      <h2>${playlist.title}</h2>
     </div>
-    <div class="playlist-content" data-group-name="${playlist.header}" data-group-index="${index}">
-      <div class="grid-container">
-        ${playlist.slides.map(item => `
-          <div class="grid-item">
+    <div class="playlist-content grid-container" data-group-name="${playlist.title}" data-group-index="${index}">
+        ${playlist.tracks.map(item => `
+          <div class="track">
             <a href="${item.href}" target="_blank">
-              <img src="${item.thumbnailUrl}" alt="Thumbnail" />
-              <h3>${item.title}</h3>
-              <p>Duration: ${item.duration}</p>
-              <p>Date: ${item.broadcastDate}</p>
+              <img class="track-img" src="${item.thumbnailUrl}" alt="Thumbnail" />
+              <h3  class="track-title">${item.title}</h3>
+              <p   class="track-duration">Duration: ${item.duration}</p>
+              <p   class="track-date">Date: ${item.broadcastDate}</p>
             </a>
           </div>
         `).join('')}
-      </div>
     </div>
   `).join('');
 
   const checkboxes = scrapedData.map((playlist) => `
-    <div class="draggable-category" draggable="true" data-group-name="${playlist.header}">
-      <input type="checkbox" class="category-cb" id="filter-${playlist.header}" ${checkboxStates[playlist.header] ? 'checked' : ''} data-category="${playlist.header}" />
-      <label for="filter-${playlist.header}">${playlist.header}</label>
+    <div class="draggable-category" draggable="true" data-group-name="${playlist.title}">
+      <input type="checkbox" class="category-cb" id="filter-${playlist.title}" ${checkboxStates[playlist.title] ? 'checked' : ''} data-category="${playlist.title}" />
+      <label for="filter-${playlist.title}">${playlist.title}</label>
     </div>
   `).join('');
 
@@ -56,7 +54,7 @@ const renderHtml = (scrapedData, checkboxStates) => {
 
         <!-- Main content area -->
         <div class="content" id="main-content">
-          ${groupedHtml}
+          ${playlists}
         </div>
 
         <!-- External JS file -->

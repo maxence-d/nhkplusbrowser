@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   padding: 0;
@@ -8,7 +9,8 @@ body {
   font-family: Arial, sans-serif;
   background-color: #f9f9f9;
   display: flex;
-  flex-direction: column; /* Stack elements vertically */
+  flex-direction: column;
+  /* Stack elements vertically */
 }
 
 .top-panel {
@@ -17,7 +19,8 @@ body {
   color: white;
   padding: 10px;
   display: flex;
-  justify-content: flex-start; /* Align button to the left */
+  justify-content: flex-start;
+  /* Align button to the left */
   align-items: center;
 }
 
@@ -36,8 +39,10 @@ body {
 }
 
 .main-layout {
-  display: flex; /* Create a flex container for sidebar and content */
-  flex-grow: 1; /* Allow it to grow and take available space */
+  display: flex;
+  /* Create a flex container for sidebar and content */
+  flex-grow: 1;
+  /* Allow it to grow and take available space */
 }
 
 .sidebar {
@@ -45,8 +50,10 @@ body {
   padding: 20px;
   background-color: #333;
   color: white;
-  height: 100%; /* Make sidebar height 100% */
-  overflow-y: auto; /* Make the sidebar scrollable */
+  height: 100%;
+  /* Make sidebar height 100% */
+  overflow-y: auto;
+  /* Make the sidebar scrollable */
 }
 
 .content {
@@ -60,51 +67,51 @@ body {
 }
 
 
-.playlist-header {
+.playlist-title {
   display: flex;
   flex-direction: row;
+
+  input {
+    transform: scale(2);
+    margin-right: 10px;
+  }
+
+  h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+
 }
 
-
-.playlist-header h2 {
-  font-size: 24px;
-  margin-bottom: 10px;
-}
-
-.playlist-header input {
-  transform: scale(2);
-  margin-right: 10px;
-}
-
-
-.grid-container {
+.playlist-content {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 20px;
-}
 
-.grid-item {
-  text-align: center;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  background-color: #fff;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.grid-item img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 10px;
-}
-
-.grid-item h3 {
-  font-size: 18px;
-  margin: 10px 0;
-}
-
-.grid-item p {
-  margin: 5px 0;
+  .track {
+    text-align: center;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .track-img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+  }
+  
+  .track-title {
+    font-size: 18px;
+    margin: 10px 0;
+  }
+  
+  .track-date {
+    margin: 5px 0;
+  }
+  
 }
 
 .checkbox-container label {

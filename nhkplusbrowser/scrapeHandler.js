@@ -4,6 +4,7 @@ const handleScrapePage = async (mainWindow) => {
   // Load the target URL
   await mainWindow.loadURL('https://plus.nhk.jp/');
 
+  await mainWindow.webContents.executeJavaScript(`setInterval(() => {{}, 200}`);
   // Scroll to the bottom of the page to load all dynamic content
   await mainWindow.webContents.executeJavaScript(`
     new Promise((resolve) => {
@@ -35,8 +36,8 @@ const handleScrapePage = async (mainWindow) => {
           // If it's a playlist-header, start a new group
           const headerText = element.querySelector('h3') ? element.querySelector('h3').textContent.trim() : 'Unknown Group';
           currentGroup = { 
-            header: headerText, 
-            slides: [] 
+            title: headerText, 
+            tracks: [] 
           };
           data.push(currentGroup);
         } else if (element.classList.contains('swiper-slide') && currentGroup) {
@@ -48,7 +49,7 @@ const handleScrapePage = async (mainWindow) => {
           const durationElem = element.querySelector('p'); // Assuming duration is in <p>
           const programDateElem = element.querySelector('.program_modat');
 
-          currentGroup.slides.push({
+          currentGroup.tracks.push({
             href: anchor ? anchor.href : null,
             thumbnailUrl: thumbnail ? thumbnail.src : null, // Get the src from the <img>
             title: title, // Add the h3 title
