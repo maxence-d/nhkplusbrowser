@@ -72,7 +72,7 @@ body {
   flex-direction: row;
 
   input {
-    transform: scale(2);
+    /* transform: scale(2); */
     margin-right: 10px;
   }
 
@@ -96,22 +96,22 @@ body {
     background-color: #fff;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   }
-  
+
   .track-img {
     max-width: 100%;
     height: auto;
     border-radius: 10px;
   }
-  
+
   .track-title {
     font-size: 18px;
     margin: 10px 0;
   }
-  
+
   .track-date {
     margin: 5px 0;
   }
-  
+
 }
 
 .checkbox-container label {
