@@ -71,7 +71,7 @@ app.on('ready', async () => {
     });
 
     // Save initial scraped data
-    fs.writeFileSync(dataFilePath, JSON.stringify({ lastScrapeDate: getJapanDate(), data: scrapedData }), 'utf8');
+    fs.writeFileSync(dataFilePath, JSON.stringify({ lastScrapeDate: getJapanDate(), data: scrapedData }, null, 2), 'utf8');
   } else {
     console.log("Scraping is not needed. Loading the previously scraped data...");
 
