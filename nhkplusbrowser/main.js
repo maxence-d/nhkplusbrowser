@@ -112,9 +112,9 @@ app.on('ready', async () => {
   // Save checkbox states on application close
   app.on('before-quit', () => {
     const finalData = {
+      checkboxStates: Object.fromEntries(checkboxStates),
       lastScrapeDate: getJapanDate(),
-      data: scrapedData,
-      checkboxStates: Object.fromEntries(checkboxStates) // Convert Map to an object
+      data: scrapedData
     };
     fs.writeFileSync(dataFilePath, JSON.stringify(finalData, null, 2), 'utf8');
   });
