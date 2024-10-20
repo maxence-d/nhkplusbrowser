@@ -21,38 +21,36 @@ function setupSidebarButton() {
 }
 
 function setupFiltering() {
+    let checkboxes = document.querySelectorAll("input.playlist-cb");
+    for(let checkbox of checkboxes){
+        const playlistTitle = checkbox.getAttribute('data-playlist');
+        const playlistContent = document.querySelector(`.playlist-content[data-playlist="${playlistTitle}"]`);
 
-    let categoryToCbs = {}
-
-    document.querySelectorAll('.category-cb').forEach(checkbox => {
-        const category = checkbox.getAttribute('data-category');
-        if (categoryToCbs[category] === undefined)
-            categoryToCbs[category] = []
-        categoryToCbs[category].push(checkbox);
-    });
-
-
-    for (let category in categoryToCbs) {
-        categoryToCbs[category].forEach(checkbox => {
-            const groupElement = document.querySelector('.playlist-content[data-group-name="' + category + '"]');
-            if (!checkbox.checked) {
-                groupElement.style.display = 'none'; // Hide the group if checkbox is unchecked
+        // Show/Hide on page load
+        if(!checkbox.checked){
+            playlistContent.style.display = 'none';
+        }
+        
+        // Show/Hide on click
+        checkbox.addEventListener('change', function () {
+            const isChecked = this.checked;
+            if (isChecked) {
+                playlistContent.style.display = 'grid'; // Show the group when checked
+            } else {
+                playlistContent.style.display = 'none'; // Hide the group when unchecked
             }
-            checkbox.addEventListener('change', function () {
-                if (this.checked) {
-                    groupElement.style.display = 'block'; // Show the group when checked
-                } else {
-                    groupElement.style.display = 'none'; // Hide the group when unchecked
-                }
-                // sync checkboxes
-                categoryToCbs[category].forEach(checkbox => {
-                    checkbox.checked = this.checked;
-                });
-                window.ipcRenderer.send('update-checkbox-state', category, this.checked);
-            });
-        });
-    }
 
+            // sync all checkboxes for this playlist
+            const checkboxes = document.querySelectorAll(`input.playlist-cb[data-playlist="${playlistTitle}"]`);
+            for(let checkbox of checkboxes){
+                checkbox.checked = isChecked;
+            }
+
+            window.ipcRenderer.send('update-checkbox-state', playlistTitle, this.checked);
+        });
+        
+        
+    }
 }
 
 function setupOrdering() {
