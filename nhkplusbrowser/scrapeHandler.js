@@ -4,7 +4,7 @@ const handleScrapePage = async (mainWindow) => {
   // Load the target URL
   await mainWindow.loadURL('https://plus.nhk.jp/');
 
-  await mainWindow.webContents.executeJavaScript(`setInterval(() => {{}, 200}`);
+  await mainWindow.webContents.executeJavaScript(`setInterval(() => {}, 200);`);
   // Scroll to the bottom of the page to load all dynamic content
   await mainWindow.webContents.executeJavaScript(`
     new Promise((resolve) => {
@@ -53,8 +53,8 @@ const handleScrapePage = async (mainWindow) => {
             href: anchor ? anchor.href : null,
             thumbnailUrl: thumbnail ? thumbnail.src : null, // Get the src from the <img>
             title: title, // Add the h3 title
-            duration: durationElem ? durationElem.textContent.trim().replace('分', ' minutes') : null,
-            broadcastDate: programDateElem ? programDateElem.textContent.trim() : null,
+            duration: durationElem ? durationElem.textContent.trim().replace('分', '') : null,
+            broadcastDate: programDateElem ? programDateElem.textContent.trim().split('(')[0] : null,
           });
         }
       });

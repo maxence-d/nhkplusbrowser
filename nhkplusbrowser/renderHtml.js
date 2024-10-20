@@ -12,8 +12,8 @@ const renderHtml = (scrapedData, checkboxStates) => {
             <a href="${item.href}" target="_blank">
               <img class="track-img" src="${item.thumbnailUrl}" alt="Thumbnail" />
               <h3  class="track-title">${item.title}</h3>
-              <p   class="track-duration">Duration: ${item.duration}</p>
-              <p   class="track-date">Date: ${item.broadcastDate}</p>
+              <p   class="track-duration">${item.duration}分</p>
+              <p   class="track-date">${item.broadcastDate}</p>
             </a>
           </div>
         `).join('')}
