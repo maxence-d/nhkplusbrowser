@@ -1,9 +1,9 @@
-const renderHtml = (scrapedData, checkboxStates) => {
+const renderHtml = (file) => {
 
   // Create the HTML structure for each group and generate checkboxes for the panel
-  const playlists = scrapedData.map((playlist, index) => `
+  const playlists = file.data.map((playlist, index) => `
     <div class="playlist-title">
-      <input type="checkbox" class="playlist-cb" ${checkboxStates[playlist.title] ? 'checked' : ''} data-playlist="${playlist.title}" />
+      <input type="checkbox" class="playlist-cb" ${file.cb[playlist.title] ? 'checked' : ''} data-playlist="${playlist.title}" />
       <h2>${playlist.title}</h2>
     </div>
     <div class="playlist-content grid-container" data-playlist="${playlist.title}" ">
@@ -20,9 +20,9 @@ const renderHtml = (scrapedData, checkboxStates) => {
     </div>
   `).join('');
 
-  const checkboxes = scrapedData.map((playlist) => `
+  const checkboxes = file.data.map((playlist) => `
     <div class="draggable-category" draggable="true" data-playlist="${playlist.title}">
-      <input type="checkbox" class="playlist-cb" id="filter-${playlist.title}" ${checkboxStates[playlist.title] ? 'checked' : ''} data-playlist="${playlist.title}" />
+      <input type="checkbox" class="playlist-cb" id="filter-${playlist.title}" ${file.cb[playlist.title] ? 'checked' : ''} data-playlist="${playlist.title}" />
       <label for="filter-${playlist.title}">${playlist.title}</label>
     </div>
   `).join('');

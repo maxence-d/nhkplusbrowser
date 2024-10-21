@@ -4,11 +4,15 @@ const fs = require('fs');
 const handleScrapePage = require('./scrapeHandler');  // Import the scrape handler
 const renderHtml = require('./renderHtml');  // Import the render function
 
-let mainWindow;
 const dataFilePath = path.join(__dirname, 'data.json'); // Path to the data file
+let mainWindow;
 
-// Map for checkbox states (key: category name, value: checkbox state)
-const checkboxStates = new Map();
+let file = {
+  date: null,
+  cb: new Map(),
+  data: null
+};
+
 
 // Function to get the current date in Japan time
 const getJapanDate = () => {
@@ -17,26 +21,9 @@ const getJapanDate = () => {
   return japanTime;
 };
 
-// Function to check if scraping is needed
+
 const isScrapingNeeded = () => {
-  if (!fs.existsSync(dataFilePath)) {
-    return true; // If the data file doesn't exist, we need to scrape
-  }
-
-  const logData = JSON.parse(fs.readFileSync(dataFilePath, 'utf8'));
-  const lastScrapeDate = logData.lastScrapeDate;
-
-  const currentJapanDate = getJapanDate();
-  return currentJapanDate !== lastScrapeDate; // Scrape if the date is different from the last scrape date
-};
-
-// Function to log the current scrape date in Japan time
-const logScrapeDate = () => {
-  const currentJapanDate = getJapanDate();
-  const logData = {
-    lastScrapeDate: currentJapanDate
-  };
-  fs.writeFileSync(dataFilePath, JSON.stringify(logData, null, 2), 'utf8');
+  return (!file || !file.date || getJapanDate() !== file.date);
 };
 
 app.on('ready', async () => {
@@ -55,7 +42,13 @@ app.on('ready', async () => {
 
   let scrapedData;
 
-  // Check if scraping is needed based on the Japan time zone
+  // Load file
+  if (fs.existsSync(dataFilePath)) {
+    file = JSON.parse(fs.readFileSync(dataFilePath, 'utf8'));
+    file.cb ??= {}; // Create if undefined
+  }
+
+  // Scrap if needed
   if (isScrapingNeeded()) {
     console.log("Starting the scraping process...");
 
@@ -63,38 +56,29 @@ app.on('ready', async () => {
     scrapedData = await handleScrapePage(mainWindow);
 
     // Log the current Japan date after scraping
-    logScrapeDate();
+    file.date = getJapanDate();
+    file.data = scrapedData;
 
-    // Initialize checkbox states with all checked by default
-    scrapedData.forEach(group => {
-      checkboxStates.set(group.header, true); // Default all to checked
+    // Add new checkboxes, enabled by default
+    file.data.forEach(item => {
+      if (!file.cb[item.title]) {
+        file.cb[item.title] = "true";
+      }
     });
 
-    // Save initial scraped data
-    fs.writeFileSync(dataFilePath, JSON.stringify({ lastScrapeDate: getJapanDate(), data: scrapedData }, null, 2), 'utf8');
-  } else {
-    console.log("Scraping is not needed. Loading the previously scraped data...");
-
-    // Load the previously saved data
-    const logData = JSON.parse(fs.readFileSync(dataFilePath, 'utf8'));
-    scrapedData = logData.data; // Access the previously scraped data
-
-    // Load checkbox states from the saved map
-    // Convert saved checkbox states object back into a Map
-    const savedCheckboxStates = logData.checkboxStates || {};
-    checkboxStates.clear(); // Clear existing states
-    for (const [key, value] of Object.entries(savedCheckboxStates)) {
-      checkboxStates.set(key, value); // Populate checkboxStates Map
-    }
+    // Save scraped data
+    fs.writeFileSync(dataFilePath, JSON.stringify(file, null, 2), 'utf8');
   }
 
-  // Convert checkboxStates Map to an object for rendering
-  const checkboxStatesObject = Object.fromEntries(checkboxStates);
-
+  // Display data
+  
+  // Load the previously saved data
+  file = JSON.parse(fs.readFileSync(dataFilePath, 'utf8'));
+  
   // Generate the HTML content with the scraped or previously loaded data and checkbox states
-  const htmlContent = renderHtml(scrapedData, checkboxStatesObject);
+  const htmlContent = renderHtml(file);
 
-  // Write the HTML content to a temporary file
+  // Write the HTML content to a temporary file, so it's easy to find the css
   const tempHtmlPath = path.join(__dirname, 'temp.html');
   fs.writeFileSync(tempHtmlPath, htmlContent);
 
@@ -106,16 +90,11 @@ app.on('ready', async () => {
 
   // Handle IPC for checkbox state updates
   ipcMain.on('update-checkbox-state', (event, categoryName, state) => {
-    checkboxStates.set(categoryName, state); // Update the checkbox state in the map
+    file.cb[categoryName] = state; // Update the checkbox state in the map
   });
 
   // Save checkbox states on application close
   app.on('before-quit', () => {
-    const finalData = {
-      checkboxStates: Object.fromEntries(checkboxStates),
-      lastScrapeDate: getJapanDate(),
-      data: scrapedData
-    };
-    fs.writeFileSync(dataFilePath, JSON.stringify(finalData, null, 2), 'utf8');
+    fs.writeFileSync(dataFilePath, JSON.stringify(file, null, 2), 'utf8');
   });
 });
