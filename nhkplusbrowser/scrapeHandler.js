@@ -4,22 +4,27 @@ const handleScrapePage = async (mainWindow) => {
   // Load the target URL
   await mainWindow.loadURL('https://plus.nhk.jp/');
 
-  await mainWindow.webContents.executeJavaScript(`setInterval(() => {}, 200);`);
+  const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+  await wait(500);  
+
+
   // Scroll to the bottom of the page to load all dynamic content
   await mainWindow.webContents.executeJavaScript(`
     new Promise((resolve) => {
-      let totalHeight = 0;
-      const distance = 100;
-      const timer = setInterval(() => {
-        window.scrollBy(0, distance);
-        totalHeight += distance;
+        let totalHeight = 0;
+        const distance = window.innerHeight;
+        
+        const timer = setInterval(() => {
+          window.scrollBy(0, distance);
+          totalHeight += distance;
 
-        if (totalHeight >= document.body.scrollHeight) {
-          clearInterval(timer);
-          resolve();
-        }
-      }, 100);
-    });
+          if (totalHeight >= document.body.scrollHeight) {
+            clearInterval(timer);
+            resolve();
+          }
+        }, 200);
+   
+    }); 
   `);
 
   // Wait for additional content to load
@@ -63,7 +68,7 @@ const handleScrapePage = async (mainWindow) => {
     })();
   `);
 
-  
+
   // Return the grouped data
   return extractedData;
 };
