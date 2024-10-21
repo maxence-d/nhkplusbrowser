@@ -63,6 +63,7 @@ const handleScrapePage = async (mainWindow) => {
     })();
   `);
 
+  
   // Return the grouped data
   return extractedData;
 };

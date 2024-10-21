@@ -2,30 +2,31 @@ const renderHtml = (file) => {
 
   // Create the HTML structure for each group and generate checkboxes for the panel
   const playlists = file.data.map((playlist, index) => `
-    <div class="playlist-title">
-      <input type="checkbox" class="playlist-cb" ${file.cb[playlist.title] ? 'checked' : ''} data-playlist="${playlist.title}" />
-      <h2>${playlist.title}</h2>
-    </div>
-    <div class="playlist-content grid-container" data-playlist="${playlist.title}" ">
-        ${playlist.tracks.map(item => `
-          <div class="track">
-            <a href="${item.href}" target="_blank">
-              <img class="track-img" src="${item.thumbnailUrl}" alt="Thumbnail" />
-              <h3  class="track-title">${item.title}</h3>
-              <p   class="track-duration">${item.duration}分</p>
-              <p   class="track-date">${item.broadcastDate}</p>
-            </a>
-          </div>
-        `).join('')}
-    </div>
-  `).join('');
-
-  const checkboxes = file.data.map((playlist) => `
-    <div class="draggable-category" draggable="true" data-playlist="${playlist.title}">
-      <input type="checkbox" class="playlist-cb" id="filter-${playlist.title}" ${file.cb[playlist.title] ? 'checked' : ''} data-playlist="${playlist.title}" />
-      <label for="filter-${playlist.title}">${playlist.title}</label>
+    <div class="playlist" data-playlist="${playlist.title}">
+      <div class="playlist-title">
+        <input type="checkbox" class="playlist-cb" ${file.cb[playlist.title] ? 'checked' : ''} data-playlist="${playlist.title}" />
+        <h2>${playlist.title}</h2>
+      </div>
+      <div class="playlist-content grid-container" data-playlist="${playlist.title}" ">
+          ${playlist.tracks.map(item => `
+            <div class="track">
+              <a href="${item.href}" target="_blank">
+                <img class="track-img" src="${item.thumbnailUrl}" alt="Thumbnail" />
+                <h3  class="track-title">${item.title}</h3>
+                <p   class="track-duration">${item.duration}分</p>
+                <p   class="track-date">${item.broadcastDate}</p>
+              </a>
+            </div>
+          `).join('')}
+      </div>
     </div>
   `).join('');
+  const checkboxes = Object.entries(file.cb).map(([title, checked]) => `
+  <div class="draggable-category" draggable="true" data-playlist="${title}">
+    <input type="checkbox" class="playlist-cb" id="filter-${title}" ${checked ? 'checked' : ''} data-playlist="${title}" />
+    <label for="filter-${title}">${title}</label>
+  </div>
+`).join('');
 
   // Construct the full HTML content
   const htmlContent = `
@@ -59,6 +60,9 @@ const renderHtml = (file) => {
 
         <!-- External JS file -->
         <script src="sidebar.js"></script>
+        <script>
+          reorderCategories();
+        </script>
       </body>
     </html>
   `;

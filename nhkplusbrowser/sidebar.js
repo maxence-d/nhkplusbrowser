@@ -112,11 +112,18 @@ function setupOrdering() {
 function reorderCategories() {
     const draggableContainer = document.getElementById('filters');
     const categoriesOrder = Array.from(draggableContainer.querySelectorAll('.draggable-category'))
-        .map(item => item.getAttribute('data-group-name'));
+        .map(item => item.getAttribute('data-playlist'));
 
     const mainContent = document.getElementById('main-content');
     categoriesOrder.forEach(category => {
-        const groupElement = document.querySelector('.group[data-group-name="' + category + '"]');
+        const groupElement = document.querySelector('.playlist[data-playlist="' + category + '"]');
         mainContent.appendChild(groupElement);
     });
+
+    const cbs = Array.from(document.querySelectorAll('.playlist .playlist-cb')).reduce((obj, cb) => {
+        obj[cb.dataset.playlist] = cb.checked;
+        return obj;
+      }, {});  // Initialize reduce with an empty object
+      
+    window.ipcRenderer.send('reorder-cbs', cbs);
 }

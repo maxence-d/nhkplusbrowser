@@ -93,6 +93,10 @@ app.on('ready', async () => {
     file.cb[categoryName] = state; // Update the checkbox state in the map
   });
 
+  ipcMain.on('reorder-cbs', (event, cbs) => {
+    file.cb = cbs;
+  });
+
   // Save checkbox states on application close
   app.on('before-quit', () => {
     fs.writeFileSync(dataFilePath, JSON.stringify(file, null, 2), 'utf8');
