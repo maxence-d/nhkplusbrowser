@@ -63,9 +63,20 @@ const renderHtml = (file) => {
         <script>
           reorderCategories();
         </script>
+        <script>
+            document.addEventListener('click', function (event) {
+            const target = event.target.closest('a'); // Check if a link was clicked
+            if (target && target.href) {
+              event.preventDefault(); // Prevent Electron from handling the link
+              window.ipcRenderer.send('open-external-link', target.href); // Send link to main process
+            }
+          });
+        </script>
       </body>
     </html>
   `;
+
+
 
   return htmlContent;
 };

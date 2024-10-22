@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, shell } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const handleScrapePage = require('./scrapeHandler');  // Import the scrape handler
@@ -97,6 +97,9 @@ app.on('ready', async () => {
     file.cb = cbs;
   });
 
+  ipcMain.on('open-external-link', (event, url) => {
+    shell.openExternal(url); // Open the link in the default browser
+  });
   // Save checkbox states on application close
   app.on('before-quit', () => {
     fs.writeFileSync(dataFilePath, JSON.stringify(file, null, 2), 'utf8');
