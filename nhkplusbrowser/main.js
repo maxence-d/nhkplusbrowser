@@ -4,6 +4,7 @@ const fs = require('fs');
 const handleScrapePage = require('./scrapeHandler');  // Import the scrape handler
 const renderHtml = require('./renderHtml');  // Import the render function
 
+
 const dataFilePath = path.join(__dirname, 'data.json'); // Path to the data file
 let mainWindow;
 
