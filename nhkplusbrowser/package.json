@@ -19,5 +19,8 @@
   "homepage": "https://github.com/maxence-d/nhkplusbrowser#readme",
   "devDependencies": {
     "electron": "^32.2.0"
+  },
+  "dependencies": {
+    "bootstrap": "^5.3.3"
   }
 }
